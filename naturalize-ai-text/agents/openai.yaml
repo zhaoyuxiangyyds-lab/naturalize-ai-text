@@ -1,0 +1,4 @@
+interface:
+  display_name: "Naturalize AI Text"
+  short_description: "Improve prose and validate detector experiments honestly"
+  default_prompt: "Use $naturalize-ai-text to improve this text while preserving facts, voice, genre, and disclosure; run detector experiments only when I explicitly request them, and report every validation result."

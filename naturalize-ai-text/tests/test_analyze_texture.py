@@ -22,7 +22,9 @@ class AnalyzeTextureTests(unittest.TestCase):
         self.assertEqual(report["counts"]["sentences"], 0)
         self.assertEqual(report["counts"]["paragraphs"], 0)
         self.assertIsNone(report["sentence_lengths"]["mean"])
-        self.assertIn("sample_too_small", [flag["code"] for flag in report["review_flags"]])
+        self.assertEqual(report["review_flags"], [])
+        self.assertNotIn("thresholds_applied", report)
+        self.assertIn("no automated style thresholds", report["genre_context"]["message"].lower())
 
     def test_chinese_sentence_splitting_keeps_closing_quotes(self) -> None:
         paragraphs = analyze_texture.split_paragraphs(
@@ -122,6 +124,9 @@ class AnalyzeTextureTests(unittest.TestCase):
         self.assertEqual(first.stdout, second.stdout)
         payload = json.loads(first.stdout)
         self.assertFalse(payload["disclaimer"]["authorship_inference"])
+        self.assertFalse(payload["disclaimer"]["optimization_target"])
+        self.assertFalse(payload["disclaimer"]["randomization_authorized"])
+        self.assertNotIn("thresholds_applied", payload)
         serialized = first.stdout.decode().casefold()
         self.assertNotIn("ai_score", serialized)
         self.assertNotIn("human_score", serialized)
@@ -150,6 +155,42 @@ class AnalyzeTextureTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr.decode())
             payload = json.loads(output_path.read_text(encoding="utf-8"))
             self.assertEqual(payload["input"]["language_detected"], "zh")
+
+    def test_all_documented_genres_are_accepted(self) -> None:
+        for genre in analyze_texture.GENRES:
+            with self.subTest(genre=genre):
+                args = analyze_texture.parse_args(["-", "--genre", genre])
+                self.assertEqual(args.genre, genre)
+
+    def test_poetry_reports_raw_metrics_without_default_style_flags(self) -> None:
+        numerals = "甲乙丙丁戊己庚辛"
+        text = "\n".join(f"{name}行春水绕长堤，晚钟穿过旧城西。" for name in numerals)
+        report = analyze_texture.analyze_text(text, language="zh", genre="poetry")
+        self.assertEqual(report["review_flags"], [])
+        self.assertEqual(report["genre_context"]["expected_patterns"], [])
+        self.assertFalse(report["genre_context"]["authorship_inference"])
+        self.assertIsNone(report["genre_context"]["sample_gate"])
+
+        rendered = analyze_texture.render_text(report)
+        self.assertIn("does not apply style thresholds", rendered)
+
+    def test_report_heading_density_is_raw_context_not_revision_flag(self) -> None:
+        text = "\n".join(
+            [
+                "# 状态报告",
+                "## 结论",
+                "## 证据",
+                "## 风险",
+                "## 决策",
+                "## 负责人",
+                "## 截止日期",
+                "## 附录",
+            ]
+        )
+        report = analyze_texture.analyze_text(text, language="zh", genre="report")
+        self.assertGreater(report["structure"]["structured_line_density"], 0)
+        self.assertEqual(report["review_flags"], [])
+        self.assertNotIn("thresholds_applied", report)
 
 
 if __name__ == "__main__":

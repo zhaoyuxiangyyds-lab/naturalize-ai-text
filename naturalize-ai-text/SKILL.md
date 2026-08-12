@@ -1,188 +1,131 @@
 ---
 name: naturalize-ai-text
-description: Naturalize AI-generated or heavily AI-assisted text across fiction, essays, academic and technical writing, reports, explainers, and speeches. Use when a user asks to humanize prose, reduce template-like or machine-like writing, lower an AI-detection score, compare revisions across detectors, or generate less formulaic prose. Preserve facts, citations, disclosure duties, genre constraints, and authentic author voice. Detector results are controlled observations, never proof of human authorship or a guaranteed bypass.
+description: Generate or reconstruct AI-generated, AI-assisted, mixed, or human prose in Chinese or English so it reads as deliberate, genre-appropriate writing rather than templated model output. Use for fiction, essays, academic or technical writing, reports, explainers, commentary, and speeches when asked to humanize text, reduce machine-like regularity, lower an AI-detection result, write naturally from the outset, or fully rewrite an existing AI draft. Preserve facts, citations, logic, continuity, genre, approved voice evidence of any provenance, required disclosure, and normal language quality. Treat detector results as exact-sample observations, never authorship proof or a guaranteed bypass.
 ---
 
 # Naturalize AI Text
 
-## Contract
+Package version: 3.0.0
 
-Improve the writing first. Treat a detector score as a volatile measurement from one instrument, not as authorship evidence and not as the definition of quality.
+## Operating Contract
+
+Write through content decisions, not through statistical decoration. Make variation emerge from what the text needs to notice, establish, qualify, emphasize, omit, or leave unresolved. Never target a sentence-length distribution, transition count, punctuation mix, perplexity value, or other proxy. Never apply fixed recipes such as alternating long and short sentences, inserting colloquialisms at intervals, rotating paragraph openings, or replacing words from a synonym list.
 
 Use this priority order:
 
-> source integrity > facts and citations > logic or narrative continuity > disclosure and genre fit > supported voice > clarity > surface polish > detector result
+> source integrity > facts and citations > logic or narrative continuity > disclosure and genre > supported voice > reader value > language quality > detector result
 
-Never promise a universal pass, a stable score, or a specific human percentage. A user threshold such as `human > 90%` is a named detector's sample-level experimental criterion. Report `not achieved` when it is not achieved.
+Keep every checkable fact, number, source, quotation, definition, causal direction, uncertainty, chronology, viewpoint boundary, required term, and formatting constraint. Never fabricate real experiences, identities, emotions, sources, data, quotations, citations, or process evidence. Fiction may invent within its declared fictional frame. Never add spelling or grammar errors, gibberish, homoglyphs, hidden or control characters, random punctuation, translation loops, unrelated padding, or duplicate passages. Do not remove watermarks or provider-side provenance.
 
-Never fabricate a biography, memory, source, quotation, datum, experiment, emotion, uncertainty, or human author. Never add typos, grammar faults, homoglyphs, hidden characters, random punctuation, unrelated padding, duplicated passages, or translation-loop damage. Do not remove or defeat a watermark or provider-side provenance mechanism.
+Detector benefit from any writing method is a hypothesis until the exact final bytes receive a valid result. Do not promise `human features > 90%`, `AI features < 5%`, or any other threshold before that observation exists.
 
-## Load only the needed references
+## Route The Task
 
-- Read [references/integrity-and-routing.md](references/integrity-and-routing.md) for every task.
-- Read [references/genre-guides.md](references/genre-guides.md) for the target genre.
-- Read [references/trace-to-edit-map.md](references/trace-to-edit-map.md) before diagnosing or rewriting.
-- Read [references/evaluation.md](references/evaluation.md) whenever a controlled quality budget is requested.
-- Read [references/experiment-protocol.md](references/experiment-protocol.md) whenever detector testing, score reduction, comparative claims, or method generalization is requested.
-- Read [references/platform-observation-schema.md](references/platform-observation-schema.md) when recording a platform result or screenshot.
-- Read [references/detector-science.md](references/detector-science.md) when explaining detector principles or citing research.
-- Read [references/evidence-register.md](references/evidence-register.md) before turning a platform, repository, or community claim into a skill rule.
-- Read [references/platform-and-repository-notes.md](references/platform-and-repository-notes.md) when the user asks for cross-platform or GitHub research.
+Record:
 
-## Route the request
+- `mode`: `new_generation`, `revision`, or `experiment_only`;
+- `revision_depth`: `full_reconstruction` or `local_edit`;
+- `route_reason`: the document-level defect or preservation reason that selected that depth;
+- language, genre, audience, purpose, length, format, and destination;
+- `provenance`: `human_draft`, `ai_assisted`, `ai_generated`, `mixed`, or `unknown`;
+- `anchor_basis`: `approved_corpus`, `source_draft`, `combined`, or `none`;
+- source files, approved voice samples, locked facts, locked relations and qualifiers, citations, disclosure, and forbidden changes;
+- `failed_candidate_controls`: exact hashes and observations for prior same-task candidates that must not be reused as drafting sources;
+- `retry_basis`: `none`, `explicit_blank_page`, or a named document-level reconstruction trigger;
+- whether detector testing is authorized and third-party submission is safe.
 
-Record three independent routes before writing.
+Use approved material of any provenance as content, structure, or voice evidence. It does not independently prove a real person's identity, experience, or unaided authorship. Keep provenance and revision depth separate: AI origin is not itself a defect and never selects `full_reconstruction` by itself. Diagnose the existing document before editing. Use `local_edit`, including an unchanged preservation outcome, when its governing movement, paragraph or scene jobs, voice, genre function, and factual relations already work and any defects are bounded. Use `full_reconstruction` only when the document-level scaffold is itself the problem and cannot be repaired responsibly in place, or when the user explicitly requires a blank-page rewrite and no locked constraint makes that unsafe. In `experiment_only`, freeze the input and do not edit.
 
-### 1. Work mode
+If the exact source bytes already have a valid detector observation and pass current integrity and quality review, preserve that hash unless a real reader, factual, genre, disclosure, or task defect requires an edit. Any edit creates a new unverified sample. Do not trade away an observed exact-text advantage merely because the source was AI-generated, and do not generalize that observation to other text.
 
-- `revision`: a draft exists; preserve its locked meaning and authentic correct idiosyncrasies.
-- `new_generation`: no draft exists; build from user constraints and notes. Do not claim to restore an author's voice unless an author sample was supplied.
-- `experiment_only`: compare frozen variants; do not edit unless separately authorized.
+If an exact candidate receives an unfavorable detector observation and the user requests another attempt on the same task, freeze that candidate as a failed exact-hash control. The result does not diagnose a sentence defect, prove AI authorship, or by itself select `full_reconstruction`. Retry only when the user authorizes a blank-page recomposition or an independent document-level trigger already supports reconstruction. Preserve successful exact hashes from other samples and genres; a failure elsewhere is not a reason to regenerate them.
 
-### 2. Provenance
+Read [references/integrity-and-routing.md](references/integrity-and-routing.md) for every task. Then read:
 
-Record `human_draft`, `ai_assisted`, `ai_generated`, `mixed`, or `unknown`. Also record whether the user supplied author notes or a voice sample. A self-generated first draft is not an author sample.
+- [references/composition-and-reconstruction.md](references/composition-and-reconstruction.md) for every `new_generation` or `revision` task;
+- [references/genre-guides.md](references/genre-guides.md) for the selected genre;
+- [references/chinese-naturalness.md](references/chinese-naturalness.md) for Chinese text;
+- [references/english-naturalness.md](references/english-naturalness.md) for English text;
+- [references/trace-to-edit-map.md](references/trace-to-edit-map.md) only when diagnosing a supplied draft;
+- [references/evaluation.md](references/evaluation.md) for quality review or a controlled tradeoff;
+- [references/experiment-protocol.md](references/experiment-protocol.md) and [references/platform-observation-schema.md](references/platform-observation-schema.md) for detector tests;
+- [references/detector-science.md](references/detector-science.md), [references/evidence-register.md](references/evidence-register.md), and [references/platform-and-repository-notes.md](references/platform-and-repository-notes.md) before converting research or community claims into reusable rules.
 
-### 3. Context
+For every `new_generation` or `full_reconstruction`, create the compact composition trace defined in `composition-and-reconstruction.md` before drafting visible prose. Outside Chinese fiction and narrative, record selected material IDs, the next functional unit committed before it is written, and the reader, argument, or story state changed afterward. For Chinese fiction and narrative only, use the continuous-scene-span exception: establish a viewpoint substrate before choosing the event route, then commit current scene state, continuity boundaries, and allowed material before an uninterrupted scene passage. Record the actual story state only after that span. Do not stop to optimize each beat, exchange, paragraph, or detail. Record decisions, not hidden chain-of-thought. A finished document followed by a retrospective explanation is not a traced writing process. If a trace cannot be persisted, continue the writing task but do not describe the result as a clean forward test of this skill.
 
-Record `private_creative`, `ordinary_publication`, or `assessed_or_high_stakes`. Preserve required AI disclosure. For assessed or high-stakes work, do not help create false authorship evidence or conceal assistance contrary to the governing rules; quality editing and transparent disclosure remain allowed.
+When detector reduction is an explicit priority and an approved same-language, same-genre complete text is available, read [references/editorial-anchors.md](references/editorial-anchors.md). Freeze each anchor's exact hash and provenance, extract editorial decisions, and use them as a content-selection comparator. An anchor is not proof of human authorship and never licenses phrase copying. If no suitable anchor exists, record `anchor_basis: none` and treat detector benefit as lower-confidence and unverified.
 
-Ask only for missing information that would materially change facts, voice, permission, or disclosure. Otherwise state assumptions and proceed.
+## Execute One Writing Mode
 
-## Freeze the text contract
+### New Generation
 
-Before revision, freeze:
+Do not create a generic complete draft and humanize it afterward. Start with a material board containing only verified or user-authorized content, unresolved questions, genre constraints, and voice evidence. Decide what matters most to this reader, what receives depth, what remains brief, and what should be omitted. Build a provisional route from evidence, causality, time, tension, or decision; do not force comprehensive or symmetrical coverage.
 
-- language, genre, audience, purpose, target length, format, and publication setting;
-- facts, dates, numbers, names, definitions, quotations, citations, and technical terms;
-- thesis, conclusion strength, causal direction, uncertainty, and scope;
-- viewpoint, chronology, character knowledge, world rules, and required motifs;
-- disclosure requirements and forbidden transformations;
-- author-supplied voice evidence, if any.
+If an editorial anchor is available, add its decision profile to the material board before choosing the route. Use it to make deliberate choices about emphasis, omission, qualification, and closure; do not imitate its topic, outline, paragraph count, or wording.
 
-For factual work, create a claim ledger with `claim`, `source`, `precise location`, `type`, `confidence`, and `locked`. Separate fact, inference, opinion, and fiction.
+Draft from the material board. Carry forward local discoveries and constraints rather than regenerating the whole document into a smoother template. Let paragraph and sentence form follow the material and genre. Finish only after the text has a coherent document-level movement and a genre-appropriate close.
 
-For new fiction, create a compact story ledger: desire, obstacle, decision, consequence, viewpoint knowledge, timeline, setting rules, and unresolved threads. Select details because the scene needs them, not merely to look specific.
+Outside Chinese fiction and narrative, commit and draft one functional unit at a time. Before each unit, record which material IDs it may use, its job, and the state from which it starts. After writing it, record what actually changed and which constraint now governs the next choice. For Chinese fiction and narrative only, draft one continuous scene span at a time under the narrower precommitment in `composition-and-reconstruction.md`; review state after the span rather than assigning every local detail a plot job. Before selecting how the supplied event unfolds, establish the viewpoint character's durable attention, existing social relation or routine, and an ordinary unfinished concern that would exist without the prompt's central object. Let the supplied pressure interrupt or coexist with that life instead of making every sentence adjudicate the brief. Preserve supplied ownership, custody, evidence, uncertainty, and comparative stakes exactly. Do not invent a deadline, illness, child, financial hardship, public duty, or other decisive sympathy weight merely to make one open choice morally obvious. Do not pre-compose a complete polished answer and backfill these records.
 
-## Establish V0 before editing
+### Full Reconstruction
 
-Save the exact input as immutable `V0` and compute its SHA-256. If detector work was requested, define the acceptance criterion and quality budget before seeing new scores. Do not inspect highlighted spans and then retroactively describe ordinary edits as detector theory.
+Enter this mode only after the revision-depth gate identifies a document-level reconstruction trigger. Freeze the source as `V0` and hash its exact bytes. Extract a semantic ledger: claims, evidence, citations, definitions, conditions, uncertainty, stance, chronology, narrative events, viewpoint knowledge, required language, voice traits, and unresolved threads. Separate exact strings that must survive from prose that may be rebuilt.
 
-When local files are available, run:
+After the ledger is complete, stop using the source sentence sequence as the drafting scaffold. Design a new document route from purpose, reader need, evidence, causality, or scene pressure, then write a blank-page candidate from the ledger and approved voice evidence. Do not paraphrase sentence by sentence, preserve paragraph correspondence, or perform synonym substitution. Compare the candidate with `V0` only after the independent draft exists; restore omissions and exact material without restoring the old generated frame.
 
-```powershell
-python scripts/analyze_texture.py input.txt --language auto --genre fiction
-python scripts/validate_text.py input.txt --format json --pretty
-```
+For an authorized retry after a failed exact-hash observation, use the stricter failed-candidate quarantine in `composition-and-reconstruction.md`. Build an authoritative material-only ledger from the raw brief, frozen source, citations, approved voice evidence, and later authorized facts. Do not read or imitate failed-candidate wording, paragraph order, scene or event chain, rhetorical arc, or ending while drafting. A failed candidate may contribute material only when that material is independently present in an authoritative source or separately authorized. Reopen failed candidates only after the independent draft exists, for overlap and functional-signature review. A long-overlap pass is not enough: reject a candidate that recreates the same unlocked decision, consequence, and closure sequence. Do not patch or invert it in the now-exposed context. Restart only in a fresh context from the frozen ledger and an independently justified route option recorded before prose. The retry is a new unverified hash.
 
-`analyze_texture.py` describes repetition, rhythm, transitions, punctuation, and layout. It is not an AI detector and a clean report predicts no commercial score. `validate_text.py` checks exact bytes and deterministic surface hazards; it cannot prove facts, continuity, spelling, or authorship.
+Use the same language-and-genre-specific trace as new generation. Outside Chinese fiction and narrative, a reconstruction unit must identify its ledger IDs before prose is written and record its resulting reader, argument, or story state afterward. A Chinese fiction reconstruction span must identify allowed ledger IDs and viewpoint or continuity boundaries before prose, then record the resulting story state only after the uninterrupted span. If the next unit or span changes because drafting exposed a missing premise, conflict, or better emphasis, record that route change before drafting it.
 
-## Diagnose observable writing problems
+When an approved editorial anchor is used, quarantine its wording as well as the `V0` scaffold. Let its decision profile inform grouping and depth, then reconcile every candidate unit to `V0` or an authorized source.
 
-Use [references/trace-to-edit-map.md](references/trace-to-edit-map.md). For each proposed edit, record:
+### Preserve Or Local Edit
 
-1. the exact span or document-level pattern;
-2. the reader-facing problem in this genre;
-3. the evidence for that diagnosis;
-4. the proposed intervention;
-5. the locked constraints at risk;
-6. the validation needed after the edit.
+Keep the source's successful movement and voice. List concrete reader-facing, factual, genre, or language defects, change only the smallest responsible spans, and leave correct passages alone. Returning the unchanged source is valid when no authorized change improves it. Do not perform a global polish pass merely to make authorship provenance less visible, and do not treat preservation or local editing as a reconstructed document.
 
-Do not call a phrase an "AI word" or infer a proprietary feature from a colored highlight. Platform highlights are annotations from that platform. They reveal neither causality nor the detector's internal weights.
+Detailed procedures and stop conditions are in [references/composition-and-reconstruction.md](references/composition-and-reconstruction.md).
 
-Common diagnoses include generic framing, paragraph-role symmetry, exhaustive but shallow coverage, redundant summaries, uniformly resolved transitions, over-explained morals, narrator/character register collapse, ornamental specificity, uniform emotional cadence, and certainty unsupported by sources. These are problems only when they harm the actual text; human writing can contain them too.
+## Validate The Candidate
 
-## Rewrite in content-led passes
+Run three separate reviews:
 
-### Pass 1: information or scene
+1. **Meaning and continuity:** reconcile every ledger item, citation, number, term, condition, inference, timeline event, viewpoint fact, and disclosure. Then run the reader-visible relation-coverage gate in `composition-and-reconstruction.md`: map each locked relation and every required qualifier to the smallest final-text span that makes it readable, and map every candidate assertion back to authority. A material board, trace, or reviewer intention does not satisfy a lock when the final prose omits it or changes its scope.
+2. **Reader and genre:** check selection, emphasis, paragraph jobs, progression, voice, useful repetition, information depth, and ending. Reject manufactured quirks and unexplained local disruption.
+3. **Surface integrity:** check spelling, Chinese near-form or homophone substitutions, English usage, grammar, punctuation pairs, Unicode, formatting, and accidental duplication.
 
-Remove correct but non-contributing filler. Add only sourced facts or fictionally coherent details that change action, inference, atmosphere, or choice. In new fiction, avoid making every prop foreshadow the ending; selective unused texture may remain when it belongs naturally to the setting.
-
-### Pass 2: structure
-
-Give each paragraph or scene a distinct job. Arrange it by evidence strength, cause, time, decision, or tension. Do not force equal section lengths, mirrored paragraph counts, three-part lists, or a lesson-shaped ending when the material does not require them.
-
-### Pass 3: stance and voice
-
-Separate observation, evidence, inference, and opinion. Match certainty to sources. Keep narrator knowledge within viewpoint. Differentiate speakers through goals, vocabulary, implication, interruption, and what they avoid saying, not through random quirks.
-
-### Pass 4: sentence and paragraph form
-
-Vary form because functions differ: decisions may be short, conditions may be long, dialogue may interrupt, and evidence may require stable terminology. Remove redundant transitions and recaps. Keep functional repetition. Do not randomize length, punctuation, or syntax.
-
-### Pass 5: surface audit
-
-Check reference, grammar, spelling, punctuation pairs, terminology, names, numbers, quotations, formatting, and accidental reuse. Preserve correct author-specific roughness only when it came from the source or an author sample. Do not manufacture imperfection.
-
-## Controlled quality budget
-
-Use only when the user explicitly requests or permits it. Begin from the best quality-preserving version, then change one intervention family per variant.
-
-Permitted candidates include:
-
-- removing a polished but redundant transition or recap;
-- allowing paragraph density to follow content rather than visual symmetry;
-- retaining correct lexical repetition instead of forced synonyms;
-- choosing a plainer correct phrase over generic ornamental polish;
-- preserving an author-supplied fragment, interruption, qualification, or mild rough edge that works in context;
-- leaving a nonessential implication unstated when target readers can follow it without ambiguity.
-
-The budget may spend a small amount of elegance, symmetry, transition smoothness, or rhetorical completeness. It may not spend truth, citations, logic, chronology, task-level clarity, grammar, spelling, stable terminology, narrative continuity, disclosure, or identity integrity.
-
-Apply [references/evaluation.md](references/evaluation.md). Reject a candidate on any hard-gate failure even if a detector improves.
-
-## Detector experiment workflow
-
-Use [references/experiment-protocol.md](references/experiment-protocol.md) exactly.
-
-Minimum rules:
-
-1. Declare the detector threat model when known: likelihood, curvature, trained classifier, watermark, retrieval/provenance, or opaque commercial ensemble.
-2. Use complete, non-repeated text in its real format. If too short, record `not evaluable`; never duplicate or pad.
-3. Include a genuine, rights-compatible human control matched by language, genre, approximate length, and publication setting. Test the control before interpreting the target.
-4. Preserve immutable versions. Prefer one-factor ablations. Keep development samples separate from holdout samples.
-5. Record exact bytes, SHA-256, counts, detector URL, displayed model/date, settings, time, all visible component scores and labels, warnings, highlighted spans, and screenshot/report paths.
-6. Accept only visible numeric output, visible labels, official exported reports, or screenshots. Never infer severity from CSS class names, colors, network field names, or undocumented code.
-7. A score belongs only to the exact tested hash. Any edit, including punctuation or whitespace if submitted, invalidates it. A near-final score is not a final score.
-8. Keep every run, contradiction, CAPTCHA interruption, quota failure, and unfavorable result. Do not select only the best score.
-9. Measure rerun variation where quota permits. A deterministic repeat is replication of the service response, not independent evidence.
-10. Stop when a hard gate fails, quality exceeds budget, effects do not exceed noise, controls reveal unacceptable false positives, or results conflict without a reproducible direction.
-
-Create and validate an experiment record with:
+When files are available, run:
 
 ```powershell
-python scripts/experiment_record.py init final.txt --sample-id sample-01 --stage final --mode new_generation --provenance ai_generated --language zh --genre fiction -o sample-01.json
-python scripts/experiment_record.py validate sample-01.json --text final.txt
+python scripts/validate_text.py final.txt --format json --pretty --strict
+python scripts/analyze_texture.py final.txt --language auto --genre fiction --format json --pretty
+python scripts/validate_relation_coverage.py relation-coverage.json --text final.txt --strict --pretty
 ```
 
-## Evidence and generalization
+`analyze_texture.py` reports reviewable surface patterns. It is not an AI detector, score optimizer, or target specification. Never revise merely to move one of its metrics.
 
-Grade claims with [references/evidence-register.md](references/evidence-register.md): peer-reviewed or official primary evidence outranks reproducible repositories; community anecdotes are hypotheses only; degradation and integrity violations are rejected.
+Run `validate_relation_coverage.py` whenever the task has locked relations or qualifiers. It deterministically checks declared source hashes, complete inventory status, exact source and final-text spans, qualifier coverage, forbidden-inference review, and assertion authority. Its pass is record consistency only; manually audit whether the inventory omitted or mislabeled any semantic relation.
 
-Do not promote a document-specific intervention into this skill unless it passes quality gates on multiple complete samples and then succeeds on untouched holdout samples across the claimed languages, genres, generators, and detector versions. Report sample counts, failures, control behavior, and uncertainty. One successful story cannot establish model or platform universality; one failed holdout disproves a guarantee.
+When an editorial anchor was used, also run `scripts/check_overlap.py` against every anchor and review every reported span:
 
-## Final validation
+```powershell
+python scripts/check_overlap.py final.txt --reference anchor.txt --language auto --strict --format json --pretty
+```
 
-Before delivery:
+## Record Detector Evidence
 
-- compare the revision with the frozen contract and claim/story ledger;
-- verify every changed fact, number, name, quotation, citation, and technical term;
-- run a separate spelling and grammar pass, including Chinese homophones, near-form characters, missing/duplicated characters, and input-method substitutions;
-- run `validate_text.py` on the final bytes;
-- check argument validity or narrative continuity manually;
-- use blind readers when feasible; hide provenance, version labels, and detector scores;
-- test the exact final hash if and only if detector testing was requested and permitted;
-- mark every automated check, manual check, unavailable check, and unresolved item.
+An integrated generation or reconstruction may make several linked content decisions at once. Do not claim which decision caused a score change. Use one-factor ablations only in a later registered experiment when causal attribution matters; do not force ordinary writing into serial detector steering.
+
+Never upload user text automatically. When testing is authorized, provide the exact final text and SHA-256 for the user to submit, especially to Tencent Zhuque, then record the returned screenshot or official report against that hash. Record every visible component and detector update date. A label without the required numeric components is not evaluable for a numeric threshold.
+
+For a clean forward test, freeze the skill tree before the request, record its tree hash and the references actually read, use an explicit skill invocation in a fresh execution context, save and hash the contemporaneous composition trace, and record any post-generation edits. A main task that changes the skill and then writes the test text is an authoring pass, not an independent forward test. A self-declared trace improves auditability but does not prove that an internal mental process occurred.
+
+```powershell
+python scripts/experiment_record.py init final.txt --sample-id sample-01 --stage final --mode revision --provenance ai_generated --language zh --genre fiction -o sample-01.json
+python scripts/experiment_record.py validate sample-01.json --text final.txt --strict --require-preregistration --require-execution-provenance
+```
+
+Do not use repeated unregistered submissions, highlighted-span chasing, local metrics, or favorable screenshots from a different hash as evidence. Report absent or conflicting results as `not_evaluable` or `single_observation`, not success.
 
 ## Deliver
 
-Return:
-
-1. the final text and exact SHA-256 when files are used;
-2. a compact change log tied to diagnosed problems;
-3. fact/citation or narrative-continuity results;
-4. spelling, grammar, Unicode, duplication, and formatting results, distinguishing automated from manual checks;
-5. blind quality results and every accepted quality-budget tradeoff;
-6. the complete detector record, including matched controls, failures, exact-final status, and whether the user's threshold was achieved;
-7. the evidence level of any reusable claim;
-8. this limitation: detector outputs depend on language, genre, length, generator, detector version, threshold, and input construction; they cannot prove human authorship.
+Return the finished text first. Then report mode and reconstruction depth, locked-content reconciliation, unresolved risks, surface checks, and exact hash when files are used. Include detector evidence only when it belongs to the exact final bytes. State that results depend on language, genre, length, generator, detector version, threshold, and input construction and cannot prove human authorship.

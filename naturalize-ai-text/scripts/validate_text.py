@@ -25,6 +25,25 @@ HAN_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]")
 LATIN_RE = re.compile(r"[A-Za-z]")
 WORD_RE = re.compile(r"[A-Za-z]+(?:['\u2019][A-Za-z]+)*")
 
+ABBREVIATIONS = {
+    "mr",
+    "mrs",
+    "ms",
+    "dr",
+    "prof",
+    "sr",
+    "jr",
+    "st",
+    "vs",
+    "etc",
+    "no",
+    "fig",
+    "inc",
+    "corp",
+}
+CLOSING_MARKS = set("\"'\u2019\u201d\u3009\u300b\u300d\u300f\u3011\u3015\u3017\u3019\u301b)]}")
+SENTENCE_ENDS = set(".!?\u3002\uff01\uff1f")
+
 OPEN_TO_CLOSE = {
     "(": ")",
     "[": "]",
@@ -42,7 +61,9 @@ OPEN_TO_CLOSE = {
     "‘": "’",
 }
 CLOSE_TO_OPEN = {close: open_ for open_, close in OPEN_TO_CLOSE.items()}
-SYMMETRIC_QUOTES = {'"', "'", "`"}
+# ASCII apostrophes are ambiguous in contractions and possessives, so an odd
+# count is not reliable evidence of an unmatched quotation mark.
+SYMMETRIC_QUOTES = {'"', "`"}
 SUSPICIOUS_SPACES = {
     "\u00a0": "NO-BREAK SPACE",
     "\u1680": "OGHAM SPACE MARK",
@@ -72,9 +93,61 @@ def _paragraphs(text: str) -> list[str]:
     return [part.strip() for part in re.split(r"\n[ \t]*\n+", text.strip()) if part.strip()]
 
 
+def _period_is_boundary(text: str, index: int) -> bool:
+    previous = text[index - 1] if index else ""
+    following = text[index + 1] if index + 1 < len(text) else ""
+    if previous.isdigit() and following.isdigit():
+        return False
+    if text[index : index + 3] == "...":
+        return True
+
+    before = text[:index]
+    token_match = re.search(r"([A-Za-z]+)$", before)
+    token = token_match.group(1).casefold() if token_match else ""
+    if token in ABBREVIATIONS:
+        return False
+    dotted = text[max(0, index - 12) : index + 1]
+    if re.search(r"(?:[A-Za-z]\.){2,}$", dotted):
+        return False
+
+    next_nonspace = ""
+    for character in text[index + 1 :]:
+        if character not in CLOSING_MARKS and not character.isspace():
+            next_nonspace = character
+            break
+    if len(token) == 1 and next_nonspace.isupper():
+        return False
+    return True
+
+
 def _sentences(text: str) -> list[str]:
-    parts = re.split(r"(?<=[。！？!?])\s+|(?<=[。！？!?])(?=[\"'“”‘’])", text)
-    return [part.strip() for part in parts if part.strip()]
+    sentences: list[str] = []
+    start = 0
+    index = 0
+    while index < len(text):
+        character = text[index]
+        if character not in SENTENCE_ENDS:
+            index += 1
+            continue
+        if character == "." and not _period_is_boundary(text, index):
+            index += 1
+            continue
+
+        end = index + 1
+        while end < len(text) and text[end] in SENTENCE_ENDS:
+            end += 1
+        while end < len(text) and text[end] in CLOSING_MARKS:
+            end += 1
+        fragment = text[start:end].strip()
+        if fragment and any(_content_char(char) for char in fragment):
+            sentences.append(fragment)
+        start = end
+        index = end
+
+    tail = text[start:].strip()
+    if tail and any(_content_char(char) for char in tail):
+        sentences.append(tail)
+    return sentences
 
 
 def _normalized_for_duplicate(value: str) -> str:

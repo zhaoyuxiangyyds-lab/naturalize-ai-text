@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Deterministic surface-style diagnostics for Chinese and English text.
+"""Deterministic surface descriptions for Chinese and English text.
 
 This tool reports repetition, rhythm, punctuation, and document structure. It
-does not detect AI authorship and does not produce an AI/human score.
+does not detect AI authorship, prescribe a target distribution, or produce an
+AI/human score.
 """
 
 from __future__ import annotations
@@ -20,8 +21,22 @@ from typing import Any, Iterable, Sequence
 
 
 TOOL_NAME = "analyze-texture"
-TOOL_VERSION = "1.0.0"
-SCHEMA_VERSION = "1.0"
+TOOL_VERSION = "1.3.0"
+SCHEMA_VERSION = "1.2"
+
+GENRES = (
+    "general",
+    "fiction",
+    "essay",
+    "academic",
+    "technical",
+    "report",
+    "explanation",
+    "argument",
+    "speech",
+    "poetry",
+    "mixed",
+)
 
 HAN_PATTERN = r"\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff"
 HAN_RE = re.compile(f"[{HAN_PATTERN}]")
@@ -112,29 +127,6 @@ ABBREVIATIONS = {
 CLOSING_MARKS = set("\"'\u2019\u201d\u3009\u300b\u300d\u300f\u3011\u3015\u3017\u3019\u301b)]}")
 SENTENCE_ENDS = set(".!?\u3002\uff01\uff1f")
 
-THRESHOLDS = {
-    "minimum_sentences": 8,
-    "minimum_analysis_units": 100,
-    "minimum_paragraphs": 5,
-    "uniform_sentence_cv_below": 0.22,
-    "uniform_paragraph_cv_below": 0.25,
-    "duplicate_excess_ratio_at_least": 0.10,
-    "duplicate_single_group_count_at_least": 3,
-    "repeated_opener_coverage_at_least": 0.30,
-    "repeated_opener_group_count_at_least": 3,
-    "transition_sentence_coverage_at_least": 0.35,
-    "zh_transitions_per_100_units_at_least": 1.20,
-    "en_transitions_per_100_units_at_least": 2.50,
-    "repeated_ngram_coverage_at_least": 0.12,
-    "repeated_long_ngram_groups_at_least": 2,
-    "zh_long_ngram_size": 6,
-    "en_long_ngram_size": 4,
-    "punctuation_minimum": 20,
-    "punctuation_nonzero_categories_at_most": 2,
-    "punctuation_dominant_share_at_least": 0.80,
-    "structure_minimum_nonempty_lines": 8,
-    "structured_line_density_at_least": 0.45,
-}
 
 
 def _rounded(value: float | None) -> float | None:
@@ -425,9 +417,7 @@ def ngram_profile(
             item["units"],
         )
     )
-    long_size = THRESHOLDS[
-        "en_long_ngram_size" if language == "en" else "zh_long_ngram_size"
-    ]
+    long_size = 4 if language == "en" else 6
     long_group_count = sum(1 for item in maximal if item["n"] >= long_size)
 
     def display(item: dict[str, Any]) -> dict[str, Any]:
@@ -661,199 +651,6 @@ def structure_profile(text: str) -> dict[str, Any]:
     }
 
 
-def _flag(code: str, message: str, evidence: dict[str, Any], caveat: str) -> dict[str, Any]:
-    return {
-        "code": code,
-        "severity": "notice",
-        "message": message,
-        "evidence": evidence,
-        "caveat": caveat,
-    }
-
-
-def build_review_flags(report: dict[str, Any]) -> list[dict[str, Any]]:
-    flags: list[dict[str, Any]] = []
-    counts = report["counts"]
-    sentence_stats = report["sentence_lengths"]
-    paragraph_stats = report["paragraph_lengths"]
-    thresholds = THRESHOLDS
-
-    if (
-        counts["sentences"] < thresholds["minimum_sentences"]
-        or counts["analysis_units"] < thresholds["minimum_analysis_units"]
-    ):
-        flags.append(
-            _flag(
-                "sample_too_small",
-                "The sample is too small for stable structural comparisons.",
-                {
-                    "sentence_count": counts["sentences"],
-                    "analysis_units": counts["analysis_units"],
-                    "minimum_sentences": thresholds["minimum_sentences"],
-                    "minimum_analysis_units": thresholds["minimum_analysis_units"],
-                },
-                "All metrics are still reported, but short-text variation is especially unstable.",
-            )
-        )
-
-    if (
-        counts["sentences"] >= thresholds["minimum_sentences"]
-        and sentence_stats["cv"] is not None
-        and sentence_stats["cv"] < thresholds["uniform_sentence_cv_below"]
-    ):
-        flags.append(
-            _flag(
-                "uniform_sentence_lengths",
-                "Sentence lengths vary little in this sample.",
-                {
-                    "sentence_count": counts["sentences"],
-                    "cv": sentence_stats["cv"],
-                    "threshold": thresholds["uniform_sentence_cv_below"],
-                },
-                "Uniform length may be intentional in concise prose, dialogue, or technical writing.",
-            )
-        )
-
-    if (
-        counts["paragraphs"] >= thresholds["minimum_paragraphs"]
-        and paragraph_stats["cv"] is not None
-        and paragraph_stats["cv"] < thresholds["uniform_paragraph_cv_below"]
-    ):
-        flags.append(
-            _flag(
-                "uniform_paragraph_lengths",
-                "Paragraph lengths vary little in this sample.",
-                {
-                    "paragraph_count": counts["paragraphs"],
-                    "cv": paragraph_stats["cv"],
-                    "threshold": thresholds["uniform_paragraph_cv_below"],
-                },
-                "Formatting conventions and deliberate parallel structure can produce this pattern.",
-            )
-        )
-
-    duplicates = report["duplicates"]
-    largest_duplicate_group = max((group["count"] for group in duplicates["groups"]), default=0)
-    if (
-        counts["sentences"] >= thresholds["minimum_sentences"]
-        and (
-            duplicates["excess_ratio"] >= thresholds["duplicate_excess_ratio_at_least"]
-            or largest_duplicate_group >= thresholds["duplicate_single_group_count_at_least"]
-        )
-    ):
-        flags.append(
-            _flag(
-                "duplicate_sentences",
-                "Exact normalized sentences recur frequently.",
-                {
-                    "excess_ratio": duplicates["excess_ratio"],
-                    "largest_group": largest_duplicate_group,
-                },
-                "Refrains, quotations, labels, and templates may require exact repetition.",
-            )
-        )
-
-    openers = report["repetition"]["openers"]
-    largest_opener_group = max((group["count"] for group in openers["groups"]), default=0)
-    if (
-        counts["sentences"] >= thresholds["minimum_sentences"]
-        and openers["repeated_sentence_coverage"] >= thresholds["repeated_opener_coverage_at_least"]
-        and largest_opener_group >= thresholds["repeated_opener_group_count_at_least"]
-    ):
-        flags.append(
-            _flag(
-                "repeated_sentence_openers",
-                "Several sentences begin with the same lexical pattern.",
-                {
-                    "coverage": openers["repeated_sentence_coverage"],
-                    "largest_group": largest_opener_group,
-                },
-                "Anaphora and other deliberate rhetorical patterns can produce this result.",
-            )
-        )
-
-    transitions = report["transitions"]
-    transition_density_threshold = thresholds[
-        "en_transitions_per_100_units_at_least"
-        if report["input"]["language_detected"] == "en"
-        else "zh_transitions_per_100_units_at_least"
-    ]
-    if (
-        counts["sentences"] >= thresholds["minimum_sentences"]
-        and transitions["per_100_units"] >= transition_density_threshold
-        and transitions["sentence_coverage"] >= thresholds["transition_sentence_coverage_at_least"]
-    ):
-        flags.append(
-            _flag(
-                "dense_explicit_transitions",
-                "Explicit transition phrases occur densely across sentences.",
-                {
-                    "per_100_units": transitions["per_100_units"],
-                    "sentence_coverage": transitions["sentence_coverage"],
-                    "density_threshold": transition_density_threshold,
-                },
-                "Academic and instructional prose often needs explicit transitions.",
-            )
-        )
-
-    ngrams = report["repetition"]["ngrams"]
-    if (
-        counts["analysis_units"] >= thresholds["minimum_analysis_units"]
-        and ngrams["long_repeated_group_count"] >= thresholds["repeated_long_ngram_groups_at_least"]
-        and ngrams["repeated_unit_coverage"] >= thresholds["repeated_ngram_coverage_at_least"]
-    ):
-        flags.append(
-            _flag(
-                "repeated_long_ngrams",
-                "Long exact phrases cover a substantial part of the sample.",
-                {
-                    "long_group_count": ngrams["long_repeated_group_count"],
-                    "coverage": ngrams["repeated_unit_coverage"],
-                    "long_ngram_size": ngrams["long_ngram_size"],
-                },
-                "Terminology, legal clauses, citations, and intentional motifs may repeat exactly.",
-            )
-        )
-
-    punctuation = report["punctuation"]
-    nonzero_categories = sum(1 for count in punctuation["counts"].values() if count)
-    dominant_share = max(punctuation["shares"].values(), default=0.0)
-    if (
-        punctuation["total"] >= thresholds["punctuation_minimum"]
-        and nonzero_categories <= thresholds["punctuation_nonzero_categories_at_most"]
-        and dominant_share >= thresholds["punctuation_dominant_share_at_least"]
-    ):
-        flags.append(
-            _flag(
-                "low_punctuation_variety",
-                "One or two punctuation categories dominate the sample.",
-                {
-                    "punctuation_total": punctuation["total"],
-                    "nonzero_categories": nonzero_categories,
-                    "dominant_share": dominant_share,
-                },
-                "Minimalist prose and constrained formats can legitimately use a narrow punctuation range.",
-            )
-        )
-
-    structure = report["structure"]
-    if (
-        structure["lines_nonempty"] >= thresholds["structure_minimum_nonempty_lines"]
-        and structure["structured_line_density"] >= thresholds["structured_line_density_at_least"]
-    ):
-        flags.append(
-            _flag(
-                "dense_heading_list_structure",
-                "A large share of non-empty lines are headings or list items.",
-                {
-                    "nonempty_lines": structure["lines_nonempty"],
-                    "structured_line_density": structure["structured_line_density"],
-                },
-                "Reports, outlines, and reference documents commonly require this structure.",
-            )
-        )
-    return flags
-
 
 def analyze_text(
     text: str,
@@ -888,7 +685,12 @@ def analyze_text(
         "disclaimer": {
             "purpose": "surface_style_diagnostics",
             "authorship_inference": False,
-            "message": "These metrics describe surface style and do not detect AI authorship.",
+            "optimization_target": False,
+            "randomization_authorized": False,
+            "message": (
+                "These metrics describe surface form. Do not optimize them, infer authorship, "
+                "or create random variation from them."
+            ),
         },
         "input": {
             "sha256": source_sha256 or hashlib.sha256(original.encode("utf-8")).hexdigest(),
@@ -938,9 +740,18 @@ def analyze_text(
         "punctuation": punctuation_profile(original),
         "structure": structure,
         "review_flags": [],
-        "thresholds_applied": dict(THRESHOLDS),
+        "genre_context": {
+            "genre": genre,
+            "heuristic_only": True,
+            "authorship_inference": False,
+            "message": (
+                "No automated style thresholds are applied. Inspect raw measurements "
+                "only after diagnosing a reader-facing problem."
+            ),
+            "sample_gate": None,
+            "expected_patterns": [],
+        },
     }
-    report["review_flags"] = build_review_flags(report)
     return report
 
 
@@ -969,16 +780,19 @@ def render_text(report: dict[str, Any]) -> str:
         "",
         "Review notices:",
     ]
-    if report["review_flags"]:
-        for flag in report["review_flags"]:
+    lines.append("- None; this tool does not apply style thresholds.")
+    expected_patterns = report["genre_context"]["expected_patterns"]
+    lines.extend(["", "Genre-expected patterns (context only):"])
+    if expected_patterns:
+        for flag in expected_patterns:
             lines.append(f"- [{flag['code']}] {flag['message']}")
-            lines.append(f"  Caveat: {flag['caveat']}")
+            lines.append(f"  Genre context: {flag['genre_reason']}")
     else:
-        lines.append("- None under the configured descriptive thresholds.")
+        lines.append("- None; raw genre context is descriptive only.")
     lines.extend(
         [
             "",
-            "These notices are editing cues, not authorship findings or pass/fail criteria.",
+            "Raw measurements are not authorship findings, targets, or pass/fail criteria.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -997,9 +811,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("input", nargs="?", default="-", help="UTF-8 text file, or - for stdin")
     parser.add_argument("--language", choices=("auto", "zh", "en"), default="auto")
-    parser.add_argument(
-        "--genre", choices=("general", "fiction", "essay", "report"), default="general"
-    )
+    parser.add_argument("--genre", choices=GENRES, default="general")
     parser.add_argument("--paragraph-mode", choices=("blank", "line"), default="blank")
     parser.add_argument("--format", choices=("text", "json"), default="text")
     parser.add_argument("--top", type=_positive_integer, default=20)

@@ -6,6 +6,7 @@ Use this schema for every detector observation. It is deliberately platform-neut
 platform:
 product:
 url:
+detector_url:
 detector_threat_model: likelihood|curvature|classifier|stylometry|watermark|retrieval|opaque_ensemble|unknown
 displayed_model_or_version:
 displayed_update_date:

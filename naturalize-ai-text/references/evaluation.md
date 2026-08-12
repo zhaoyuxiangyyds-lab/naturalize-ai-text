@@ -1,4 +1,4 @@
-# Quality Evaluation and Controlled Budget
+# Quality Evaluation and Detector Guardrails
 
 ## Quality scorecard
 
@@ -24,42 +24,44 @@ Reject a revision regardless of detector change if it causes:
 - a factual, numerical, citation, quotation, attribution, definition, method, or scope error;
 - altered causal direction, conclusion strength, chronology, viewpoint, character knowledge, or world rules;
 - any known spelling or grammar error, unstable terminology, bad punctuation pair, or corrupted formatting;
-- fabricated experience, source, evidence, uncertainty, emotion, identity, or author claim;
+- fabricated real-person experience, source, evidence, factual uncertainty, identity, or author claim; fictional characters, events, and emotions remain permitted inside a coherent declared fictional frame;
 - hidden/control characters, homoglyphs, random punctuation, unrelated padding, or duplicated passages;
 - missing required disclosure or a violation of the destination's integrity rules.
 
 `validate_text.py` can detect several byte and Unicode hazards, but it cannot prove facts, continuity, spelling, or authorship. Those require a separate manual or source-backed check.
 
-## Controlled-quality-budget rules
+## Candidate acceptance rules
 
-Enable Tier 2 only after the user permits a small tradeoff. Start with the best quality-preserving version and change one factor per candidate. Possible costs are reduced polish, visual symmetry, transition explicitness, rhetorical completeness, or local elegance. Never spend the budget on truth, logic, task-level clarity, grammar, spelling, terminology, continuity, disclosure, or source integrity.
+Treat a new-generation or full-reconstruction candidate as one integrated composition. It may contain several linked content, structure, stance, and language decisions because those decisions depend on one another. Do not claim that any single decision caused a detector result unless a later registered ablation isolates it.
+
+Do not intentionally lower quality to create irregularity. Reduced visual symmetry, less explicit signposting, a plain local phrase, an interruption, or an unequal paragraph length may remain only when content, voice, genre, or reader use supports it. Never spend a detector budget on truth, logic, task-level clarity, grammar, spelling, terminology, continuity, disclosure, or source integrity.
 
 Retain a candidate only when:
 
 1. all hard gates pass;
 2. the target genre remains readable without new ambiguity or rereading for essential information;
-3. the quality change is described honestly, including when it is detector-motivated rather than reader-positive;
-4. the mean or median blind quality change stays within the pre-registered budget;
-5. no hard dimension declines; a soft dimension may decline by at most one minor rubric step only if the user agreed;
-6. the detector effect meets a pre-registered material threshold and exceeds observed rerun noise;
-7. the effect reproduces in comparable runs or independent tools when resources permit;
-8. the exact final hash is tested before a result is claimed.
+3. every material change has a content, evidence, voice, genre, or reader-facing reason;
+4. no quality dimension declines merely to obtain a detector result;
+5. the detector effect meets a platform-appropriate pre-registered criterion and exceeds observed rerun noise;
+6. the effect reproduces in comparable runs when the platform permits;
+7. the exact final hash is tested before a result is claimed.
 
 If no independent reader is available, label the result `self_review_only` and do not call it a validated quality improvement. If no valid detector output is available, label the candidate `insufficient_evidence` rather than infer success from a local style metric.
 
 ## Intervention catalog
 
-### Usually quality-positive
+### Content-led candidates
 
 - verified specifics instead of generic abstraction;
-- content-led paragraph or scene order;
+- whole-document reconstruction from a semantic ledger;
+- content-led paragraph or scene order and unequal depth;
 - removal of redundant transitions and summaries;
 - calibrated certainty and source-backed limits;
 - character-, speaker-, or domain-specific diction;
 - varied sentence function where repetition is accidental;
 - stable terminology and direct verbs.
 
-### Potentially budgeted
+### Conditionally valid
 
 - uneven paragraph lengths when content warrants it;
 - limited key-term repetition instead of ornamental synonyms;
@@ -69,9 +71,13 @@ If no independent reader is available, label the result `self_review_only` and d
 - a non-exhaustive close that preserves the required implication;
 - a correct author-supplied roughness.
 
+These are not interventions to distribute through a document. Keep them only where a specific function warrants them.
+
 ### Always reject
 
 Typos, grammar faults, random synonyms, shuffled logic, fake anecdotes, fake citations, altered data, translation loops without verification, homoglyphs, zero-width characters, unusual whitespace, repeated corpus padding, and detector-score cherry picking.
+
+Also reject fixed quotas for sentence length, paragraph length, transitions, punctuation, vocabulary rarity, idioms, colloquialisms, fragments, asides, or rhetorical questions.
 
 ## Reporting template
 
@@ -82,6 +88,7 @@ reader_facing_reason:
 hard_gates_passed:
 blind_review:
 quality_delta_from_best:
+content_or_genre_reasons:
 detector_observations:
 control_observations:
 repeatability:
@@ -92,4 +99,4 @@ notes:
 
 ## Interpretation
 
-Quality and detector results are separate axes. A lower score with worse prose is a failed revision. A good revision with a high detector score is still a good revision, and the detector result must be reported as a limitation rather than repaired with synthetic defects.
+Quality and detector results are separate axes. A lower score with worse prose is a failed revision. A good revision with a high detector score is still a good revision, and the result must be reported as a limitation rather than repaired with synthetic defects or metric-driven variation.

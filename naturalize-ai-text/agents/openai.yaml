@@ -1,4 +1,7 @@
 interface:
-  display_name: "Naturalize AI Text"
-  short_description: "Improve prose and validate detector experiments honestly"
-  default_prompt: "Use $naturalize-ai-text to improve this text while preserving facts, voice, genre, and disclosure; run detector experiments only when I explicitly request them, and report every validation result."
+  display_name: "Naturalize AI Text v3.0"
+  short_description: "v3.0 genre-routed Chinese and English prose composition"
+  default_prompt: "Use $naturalize-ai-text v3.0 to generate, preserve, locally revise, or fully reconstruct prose after a genre-specific document diagnosis while preserving facts, citations, logic, continuity, voice, disclosure, and language quality."
+
+policy:
+  allow_implicit_invocation: true

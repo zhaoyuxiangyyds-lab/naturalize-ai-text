@@ -2,7 +2,7 @@
 
 `naturalize-ai-text` is a Codex skill designed to help AI generate text with a lower AI-detection rate and to reduce the AI-detection rate of existing AI-generated or heavily AI-assisted text. It keeps writing quality first while preserving facts, citations, narrative continuity, genre conventions, disclosure duties, and the writer's supported voice.
 
-Version: **2.0.0**
+Version: **3.0.0**
 
 The skill works by improving content selection, structure, voice, sentence rhythm, and surface quality. It explicitly rejects typo injection, hidden characters, fabricated experiences, fake citations, translation-loop damage, and other shortcuts that make a document less trustworthy or less readable.
 
@@ -10,12 +10,15 @@ The skill works by improving content selection, structure, voice, sentence rhyth
 
 - Helps AI produce new text with a lower AI-detection rate from the first draft.
 - Revises AI-generated or AI-assisted text to reduce its AI-detection rate.
-- Routes work by revision mode, provenance, publication context, and disclosure requirements.
+- Routes new generation, local revision, and full reconstruction by language, genre, document condition, provenance, publication context, and disclosure requirements.
 - Freezes the original text and its SHA-256 before editing.
 - Diagnoses reader-facing problems such as redundant summaries, paragraph-role symmetry, over-explained morals, generic framing, and uniform cadence.
+- Builds prose through content and genre decisions instead of fixed sentence-length, punctuation, transition, or synonym recipes.
+- Uses dedicated Chinese and English guidance for fiction, explanation, argument, reports, commentary, academic and technical writing, and speeches.
+- Supports blank-page recomposition after a failed candidate without copying or mechanically inverting the failed structure.
 - Revises in content-led passes covering scene or information, structure, voice, sentence form, and surface correctness.
 - Protects facts, quotations, citations, chronology, viewpoint, character knowledge, terminology, and causal direction.
-- Provides deterministic tools for text validation and texture analysis.
+- Provides deterministic tools for text validation, texture analysis, overlap checks, composition traces, experiment records, skill-tree hashing, and relation-coverage review.
 
 ## Repository layout
 
@@ -138,6 +141,10 @@ Checks exact bytes, SHA-256, Unicode hazards, punctuation pairs, duplicated text
 python naturalize-ai-text/scripts/validate_text.py input.txt --format json --pretty
 ```
 
+### Composition and integrity tools
+
+The package also includes deterministic helpers for composition traces, source overlap, experiment records, skill-tree manifests, and reader-visible relation coverage. These tools protect reproducibility and source integrity; they do not determine authorship or guarantee a detector result.
+
 ## Run the tests
 
 The test suite uses Python's standard library and requires no third-party packages.
@@ -146,7 +153,7 @@ The test suite uses Python's standard library and requires no third-party packag
 python -m unittest discover -s naturalize-ai-text/tests -p "test_*.py" -v
 ```
 
-Version 2.0.0 currently includes 22 deterministic unit tests.
+Version 3.0.0 currently includes 99 deterministic unit tests.
 
 ## Integrity and limitations
 

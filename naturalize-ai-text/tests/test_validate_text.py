@@ -40,6 +40,18 @@ class ValidateTextTests(unittest.TestCase):
         self.assertEqual(report["status"], "fail")
         self.assertIn("sha256_mismatch", {item["code"] for item in report["hard_errors"]})
 
+    def test_ascii_apostrophe_is_not_an_unbalanced_quote(self):
+        report = validate_bytes("The writer's choice remains clear.\n".encode("utf-8"))
+        self.assertNotIn("unbalanced_delimiters", {item["code"] for item in report["hard_errors"]})
+
+    def test_chinese_sentences_split_without_spaces(self):
+        report = validate_bytes("第一句。第二句。第三句。".encode("utf-8"))
+        self.assertEqual(report["counts"]["sentences_estimate"], 3)
+
+    def test_english_sentence_split_skips_abbreviation_and_decimal(self):
+        report = validate_bytes("Dr. Li measured 3.14 units. The result was stable.".encode("utf-8"))
+        self.assertEqual(report["counts"]["sentences_estimate"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

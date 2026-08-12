@@ -1,6 +1,6 @@
 # Detector Science and Limits
 
-Checked: 2026-08-11.
+Checked: 2026-08-12.
 
 ## Bottom line
 
@@ -19,6 +19,12 @@ A detector can be useful as a noisy instrument in a controlled experiment. It ca
 | Active watermark | A generator deliberately biases token choices and a keyed test detects the bias | Not universal and conceptually different from passive style detection; do not remove or defeat it |
 | Retrieval or provenance | Text matches stored generations or provider-side records | Surface rewriting cannot guarantee avoidance; do not frame naturalization as defeating provenance |
 | Opaque commercial ensemble | Undisclosed combination of models and features | A score or highlight cannot reveal causality; versions and thresholds may change silently or explicitly |
+
+## Working design hypothesis
+
+Treat after-the-fact surface perturbation as a weak and potentially self-defeating hypothesis. A document may retain its original content selection, discourse order, paragraph-function repetition, semantic transitions, and uniform information density after words or sentence lengths change. A supervised classifier may also learn patterns associated with common paraphrasers or formulaic humanization prompts. Conversely, random or quota-driven disruption can create a different but still repeated style while harming readers.
+
+This does not establish what Tencent Zhuque or another proprietary detector measures. It justifies a safer design choice: generate from material and writing decisions at the outset, or reconstruct an existing draft from a locked semantic ledger and a new document route. Any detector effect remains sample-specific until tested.
 
 ## Primary research evidence
 
@@ -41,7 +47,7 @@ Use Wu et al. (2025), [A Survey on LLM-Generated Text Detection](https://doi.org
 
 ## Official Tencent Zhuque observations
 
-Official page: [Tencent Zhuque AI Detection Assistant](https://matrix.tencent.com/ai-detect/), checked 2026-08-11. The page displayed text-model update date `2026-07-21`.
+Official page: [Tencent Zhuque AI Detection Assistant](https://matrix.tencent.com/ai-detect/), checked 2026-08-12. The page displayed text-model update date `2026-07-21` and benchmark-data update date `2026-06-30`.
 
 Tencent describes an ensemble involving text detection, feature extraction, semantic understanding, and large-data analysis trained on generated and human data. This is a high-level product description, not enough information to reverse-engineer feature weights.
 
@@ -72,6 +78,8 @@ The official page also publishes benchmark and overall-accuracy marketing claims
 - a universal `human > 90%` promise;
 - a blacklist of supposedly AI-only words;
 - randomizing sentence lengths or punctuation to maximize a style metric;
+- treating a descriptive style metric as a target distribution;
+- claiming that whole-document reconstruction is a proven detector countermeasure before exact-platform evidence exists;
 - deliberate errors or fake personal detail;
 - pooling incompatible detector scores into an average;
 - claiming that three samples or two genres establish model-wide portability;

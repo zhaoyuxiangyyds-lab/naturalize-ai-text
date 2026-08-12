@@ -48,12 +48,13 @@ A claim may enter the permanent method only when:
 
 1. its source and conditions are recorded;
 2. it is not a Grade D technique;
-3. the proposed edit has a reader-facing rationale or is explicitly labeled detector-motivated;
+3. the proposed edit has a content, evidence, voice, genre, or reader-facing rationale;
 4. it passes all hard quality gates;
 5. a Grade C or B lead is reproduced on complete texts, not fragments;
 6. development results are not reused as holdout results;
 7. the rule succeeds on untouched samples across the exact axes claimed;
-8. failures and negative effects are retained and reported.
+8. failures and negative effects are retained and reported;
+9. an integrated composition result is not used to claim that one surface feature caused the effect.
 
 Platform-specific observations expire when the displayed detector version changes or after six months without a drift check, whichever comes first. An undocumented platform may require a shorter expiry.
 
@@ -74,4 +75,4 @@ Do not execute an unreviewed repository against user text or install it into the
 
 ## Community-claim protocol
 
-Record forum and platform recipes verbatim as claims, not instructions. Convert them into one-factor hypotheses, define a quality-preserving test, and reject them if they rely on random errors, fake experience, hidden characters, padding, uncontrolled translation, or cherry-picked screenshots. A favorable run remains sample-specific until held-out replication.
+Record forum and platform recipes verbatim as claims, not instructions. Reject them if they rely on random errors, fake experience, hidden characters, padding, uncontrolled translation, fixed surface quotas, or cherry-picked screenshots. A reader-positive process claim may be tested on a complete integrated candidate; a claim about one causal feature requires a one-factor ablation. A favorable run remains sample-specific until held-out replication.

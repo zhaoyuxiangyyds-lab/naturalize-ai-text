@@ -1,6 +1,6 @@
 # Platform and Repository Notes
 
-Checked: 2026-08-11. These notes record public claims and research leads, not bypass instructions.
+Checked: 2026-08-12. These notes record public claims and research leads, not bypass instructions.
 
 ## Platform boundaries
 
@@ -36,4 +36,10 @@ These are `B` research leads only after a pinned, reproducible local run. A repo
 
 ## Community and forum claims
 
-Claims such as “raise burstiness,” “avoid AI words,” “add typos,” “translate twice,” or “randomize punctuation” are `C` hypotheses at best and `D` when they damage text or conceal provenance. Convert a permissible claim into a preregistered, one-factor, quality-gated experiment. Retain negative results and stop when the effect is single-platform, unstable, or quality-negative.
+Claims such as “raise burstiness,” “avoid AI words,” “add typos,” “translate twice,” or “randomize punctuation” are `C` hypotheses at best and `D` when they damage text or conceal provenance. A reader-positive process claim may be tested as a complete registered composition; a claim about one causal feature requires a later one-factor ablation. Retain negative results and stop when the effect is single-platform, unstable, or quality-negative.
+
+A focused public search on 2026-08-12 surfaced many Zhihu and Bilibili posts promising `0%` AI or a Zhuque pass, but the search-visible claims generally omitted exact input hashes, complete reusable samples, matched controls, reruns, detector drift controls, and independent quality review. Treat these as promotional or anecdotal Grade C leads, not evidence.
+
+One readable Zhihu article, [“朱雀AI升级后，如何快速降低AI率，分享5个方法”](https://zhuanlan.zhihu.com/p/2047122741933904147), argued from personal observations that public, low-information examples and formulaic structure may be associated with poor outcomes, while also warning that deliberate disorder can degrade writing and that human prose can be falsely flagged. Its suggestions about personal experience, sentence rhythm, and emotion are not transferable detector rules. Import only the reader-positive principle of source-grounded specificity and authored selection; never fabricate experience or turn its surface suggestions into quotas.
+
+Reddit search results likewise contained both bypass recipes and reports that manually written or repeatedly paraphrased passages remained flagged. These anecdotes support uncertainty and failure logging, not a reliable method. Video titles, vendor demonstrations, screenshots without the exact submitted bytes, and self-reported single runs remain Grade C regardless of a claimed `0%` result.
